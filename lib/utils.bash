@@ -42,8 +42,8 @@ download_release() {
   arch=$(get_arch)
 
   case $platform in
-    darwin) arch="amd64";;
-    windows) arch="amd64";;
+  darwin) arch="amd64" ;;
+  windows) arch="amd64" ;;
   esac
 
   url="$GH_REPO/releases/download/${version}/ctop-${version}-${platform}-${arch}"
@@ -81,12 +81,12 @@ get_arch() {
   local arch=""
 
   case "$(uname -m)" in
-    x86_64 | amd64) arch="amd64" ;;
-    armv6l | armv7l) arch="arm" ;;
-    aarch64 | arm64) arch="arm64" ;;
-    *)
-      fail "Arch '$(uname -m)' not supported!"
-      ;;
+  x86_64 | amd64) arch="amd64" ;;
+  armv6l | armv7l) arch="arm" ;;
+  aarch64 | arm64) arch="arm64" ;;
+  *)
+    fail "Arch '$(uname -m)' not supported!"
+    ;;
   esac
 
   echo -n $arch
@@ -96,12 +96,12 @@ get_platform() {
   local platform=""
 
   case "$(uname | tr '[:upper:]' '[:lower:]')" in
-    darwin) platform="darwin" ;;
-    linux) platform="linux" ;;
-    windows) platform="windows" ;;
-    *)
-      fail "Platform '$(uname -m)' not supported!"
-      ;;
+  darwin) platform="darwin" ;;
+  linux) platform="linux" ;;
+  windows) platform="windows" ;;
+  *)
+    fail "Platform '$(uname -m)' not supported!"
+    ;;
   esac
 
   echo -n $platform
