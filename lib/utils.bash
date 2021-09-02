@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-# TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for ctop.
 GH_REPO="https://github.com/bcicen/ctop"
 TOOL_NAME="ctop"
 TOOL_TEST="ctop --help"
@@ -31,8 +30,6 @@ list_github_tags() {
 }
 
 list_all_versions() {
-  # TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-  # Change this function if ctop has other means of determining installable versions.
   list_github_tags
 }
 
@@ -41,11 +38,19 @@ download_release() {
   version="$1"
   filename="$2"
 
-  # TODO: Adapt the release URL convention for ctop
-  url="$GH_REPO/archive/v${version}.tar.gz"
+  platform=$(get_platform)
+  arch=$(get_arch)
+
+  case $platform in
+    darwin) arch="amd64";;
+    windows) arch="amd64";;
+  esac
+
+  url="$GH_REPO/releases/download/${version}/ctop-${version}-${platform}-${arch}"
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+  chmod +x $filename
 }
 
 install_version() {
@@ -58,10 +63,9 @@ install_version() {
   fi
 
   (
-    mkdir -p "$install_path"
-    cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
+    mkdir -p "$install_path/bin"
+    cp -r "$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$version" "$install_path/bin/$TOOL_NAME"
 
-    # TODO: Asert ctop executable exists.
     local tool_cmd
     tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
     test -x "$install_path/bin/$tool_cmd" || fail "Expected $install_path/bin/$tool_cmd to be executable."
@@ -71,4 +75,34 @@ install_version() {
     rm -rf "$install_path"
     fail "An error ocurred while installing $TOOL_NAME $version."
   )
+}
+
+get_arch() {
+  local arch=""
+
+  case "$(uname -m)" in
+    x86_64 | amd64) arch="amd64" ;;
+    armv6l | armv7l) arch="arm" ;;
+    aarch64 | arm64) arch="arm64" ;;
+    *)
+      fail "Arch '$(uname -m)' not supported!"
+      ;;
+  esac
+
+  echo -n $arch
+}
+
+get_platform() {
+  local platform=""
+
+  case "$(uname | tr '[:upper:]' '[:lower:]')" in
+    darwin) platform="darwin" ;;
+    linux) platform="linux" ;;
+    windows) platform="windows" ;;
+    *)
+      fail "Platform '$(uname -m)' not supported!"
+      ;;
+  esac
+
+  echo -n $platform
 }
