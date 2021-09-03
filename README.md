@@ -7,6 +7,10 @@
 
 </div>
 
+# Build History
+
+[![Build history](https://buildstats.info/github/chart/NeoHsu/asdf-ctop?branch=main)](https://github.com/NeoHsu/asdf-ctop/actions)
+
 # Contents
 
 - [Dependencies](#dependencies)
