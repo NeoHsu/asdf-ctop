@@ -46,7 +46,7 @@ download_release() {
   windows) arch="amd64" ;;
   esac
 
-  url="$GH_REPO/releases/download/${version}/ctop-${version}-${platform}-${arch}"
+  url="$GH_REPO/releases/download/v${version}/ctop-${version}-${platform}-${arch}"
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
